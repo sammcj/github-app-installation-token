@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
 jobs:
-  tested-installed-repo:
+  test-installed-repo:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout specified branch
