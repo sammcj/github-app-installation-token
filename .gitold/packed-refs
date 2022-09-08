@@ -1,0 +1,4 @@
+# pack-refs with: peeled fully-peeled sorted 
+fecf0801fcf69c11d8df253d222b87bb364fb014 refs/heads/main
+1c5d75e32325c6226b3897dc542b25a10d59fb01 refs/remotes/origin/main
+34f51135924a2497443b68fd4b060587e5aae09b refs/remotes/origin/whitesource/configure

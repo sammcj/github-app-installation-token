@@ -1,0 +1,25 @@
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# Editors
+**/.dccache
+.vscode
+.idea
+*.swp
+*.swo
+Session.vim
+
+# Apple
+.DS_STORE
+
+# misc
+.tmp
+
+# git mu-repo
+.mu_repo
+
+megalinter-reports/
+
+# logs
+*.log

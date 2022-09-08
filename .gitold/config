@@ -1,0 +1,25 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+	precomposeunicode = true
+[remote "origin"]
+	url = git@github.com:sammcj/github-app-installation-token.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+[branch "broken"]
+	remote = origin
+	merge = refs/heads/broken
+[branch "bump-packages"]
+	remote = origin
+	merge = refs/heads/bump-packages
+[branch "single-file"]
+	remote = origin
+	merge = refs/heads/single-file
+[branch "add-from-pm"]
+	remote = origin
+	merge = refs/heads/add-from-pm
