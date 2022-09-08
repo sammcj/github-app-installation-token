@@ -8,9 +8,9 @@
   },
   "main": "index.js",
   "scripts": {
-    "check-prettier": "yarn run prettier --fix",
+    "check-prettier": "npm run prettier --fix",
     "eslint": "eslint --ignore-path .gitignore --max-warnings 0 \"./**/*.{js,ts}\"",
-    "format-prettier": "yarn run prettier --write",
+    "format-prettier": "npm run prettier --write",
     "prettier": "prettier --ignore-path .gitignore \"./**/*.{js,json,md,ts,yml}\"",
     "test": "mocha --recursive \"lib/**/*.test.js\"",
     "build": "npx @vercel/ncc build -m index.js --minify --v8-cache"
