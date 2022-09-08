@@ -1,5 +1,5 @@
 ---
-name: GitHub App Token Generator Action
+name: GitHub App Token Generator for Actions
 author: Sam McLeod
 description: Run a GitHub Action as a GitHub App Installation instead of using secrets.GITHUB_TOKEN or a personal access token.
 
@@ -29,7 +29,7 @@ outputs:
     description: A valid token representing the Application that can be used to access what the Application has been scoped to access.
 
 runs:
-  using: node12 #TODO: Update to node16
+  using: node16
   main: dist/index.js
 
 branding:
