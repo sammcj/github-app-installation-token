@@ -1,0 +1,37 @@
+---
+name: GitHub App Token Generator for Actions
+author: Sam McLeod
+description: Run a GitHub Action as a GitHub App Installation instead of using secrets.GITHUB_TOKEN or a personal access token.
+
+inputs:
+  application_private_key:
+    description: GitHub Application Private Key value.
+    required: true
+
+  application_id:
+    description: GitHub Application ID value.
+    required: true
+
+  permissions:
+    description: "The permissions to request e.g. issues:read,secrets:write,packages:read. Defaults to all available permissions"
+    required: false
+
+  organization:
+    description: The GitHub Organization to get the application installation for, if not specified will use the current repository instead
+    required: false
+
+  github_api_base_url:
+    description: The GitHub API base URL to use, no needed it working within the same GitHub instance as the workflow as it will get picked up from the environment
+    required: false
+
+outputs:
+  token:
+    description: A valid token representing the Application that can be used to access what the Application has been scoped to access.
+
+runs:
+  using: node16
+  main: dist/index.js
+
+branding:
+  icon: lock
+  color: green
