@@ -1,5 +1,9 @@
 # GitHub App Token Authoriser
 
+[![Build Status (latest push)](https://github.com/sammcj/github-app-installation-token/workflows/Bump%20version/badge.svg)](https://github.com/sammcj/github-app-installation-token/workflows/bump-version)
+[![Stable Version](https://img.shields.io/github/v/tag/sammcj/github-app-installation-token)](https://img.shields.io/github/v/tag/sammcj/github-app-installation-token)
+[![Latest Release](https://img.shields.io/github/v/release/sammcj/github-app-installation-token?color=%233D9970)](https://img.shields.io/github/v/release/sammcj/github-app-installation-token?color=%233D9970)
+
 This [JavaScript GitHub Action](https://help.github.com/en/actions/building-actions/about-actions#javascript-actions) can be used to impersonate a GitHub App.
 
 It is a fork of [Peter Murray's workflow-application-token-action](https://github.com/peter-murray/workflow-application-token-action).
