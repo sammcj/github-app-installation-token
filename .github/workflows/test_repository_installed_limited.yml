@@ -30,7 +30,7 @@ jobs:
           permissions: "contents:read,actions:read"
 
       - name: Use token to read details
-        uses: actions/github-script@f05a81df23035049204b043b50c3322045ce7eb3 # tag=v3 #TODO: Update to v6
+        uses: actions/github-script@deb7ae927cc19ae3a8b57293dd5cd2f16171e1e2 # tag=v4 #TODO: Update to v6
         with:
           github-token: ${{ steps.use_action.outputs.token }}
           script: |
