@@ -41,7 +41,7 @@ jobs:
           organization: CattleDip
 
       - name: Use token to read details
-        uses: actions/github-script@deb7ae927cc19ae3a8b57293dd5cd2f16171e1e2 # tag=v4 #TODO: Update to v6
+        uses: actions/github-script@7dff1a87643417cf3b95bb10b29f4c4bc60d8ebd # tag=v6 #TODO: Update to v6
         with:
           github-token: ${{ steps.use_action.outputs.token }}
           script: |
