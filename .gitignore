@@ -23,3 +23,5 @@ megalinter-reports/
 
 # logs
 *.log
+
+node_modules/
