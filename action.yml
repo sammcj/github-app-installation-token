@@ -29,7 +29,7 @@ outputs:
     description: A valid token representing the Application that can be used to access what the Application has been scoped to access.
 
 runs:
-  using: node18
+  using: node16
   main: dist/index.js
 
 branding:
