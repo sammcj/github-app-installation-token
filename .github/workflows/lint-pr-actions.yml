@@ -9,9 +9,14 @@ on:
       - reopened
       - synchronize
     branches:
-      - "main"
+      - main
+      - master
+      - "!repo-sync/**"
+      - "!renovate/**"
+      - "!update/pre-commit-hooks/**"
     paths:
       - ".github/**"
+      - "!**/node_modules/**"
 
 permissions:
   contents: read
@@ -29,8 +34,8 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
-      - uses: reviewdog/action-actionlint@46bb1b6f2d05d10a2c2851ee235fe36a0ad2daa5 # tag=v1
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
+      - uses: reviewdog/action-actionlint@5c714fa8ca7b5ea8d929d273ed5bb2e3a4a7c019 # v1
         with:
           actionlint_flags: -color -ignore 'SC2086' -ignore 'SC2129'
           fail_on_error: false
