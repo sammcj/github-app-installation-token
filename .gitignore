@@ -2,7 +2,9 @@
 
 # This is a generic .gitignore for JS/TS/Java/Python projects
 
+
 # Inverse matchs to ensure these aren't ignored
+!**/dist
 !*.env.template
 !*.template.env
 !*.eslintrc.js
