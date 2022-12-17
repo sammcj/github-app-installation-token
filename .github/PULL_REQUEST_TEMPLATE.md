@@ -2,15 +2,20 @@
 
 Please include a summary of the change and which issue is fixed along with any relevant motivation, context and any dependencies that are required for this change.
 
-If there are there any breaking changes, please list them.
+-
+
+## Breaking Changes
+
+Are there any breaking changes in this PR? (If yes, please list them).
 
 -
 
 ## How Has This Been Tested?
 
-Please describe the tests that you ran to verify your changes. If possible include instructions so we can reproduce the tests.
+Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration
 
--
+- Test 1
+- Test 2
 
 ## Checklist
 
