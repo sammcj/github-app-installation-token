@@ -2,34 +2,32 @@
 
 const process = require('process');
 
-const os = require('os')
-  , path = require('path')
-  , fs = require('fs')
-  ;
-
+const os = require('os'),
+  path = require('path'),
+  fs = require('fs');
 const data = loadData();
 
 module.exports = {
-  getApplicationId: function(appName) {
+  getApplicationId: function (appName) {
     return getAppTestValue(appName, 'applicationId');
   },
 
-  getApplicationPrivateKey: function(appName) {
+  getApplicationPrivateKey: function (appName) {
     return getAppTestValue(appName, 'privateKey');
   },
 
-  getTestRepository: function(appName) {
+  getTestRepository: function (appName) {
     return getAppTestValue(appName, 'repo.repo');
   },
 
-  getTestRepositoryOwner: function(appName) {
+  getTestRepositoryOwner: function (appName) {
     return getAppTestValue(appName, 'repo.owner');
   },
 
-  getTestOrganization: function(appName) {
+  getTestOrganization: function (appName) {
     return getAppTestValue(appName, 'org');
   },
-}
+};
 
 function loadData() {
   const testDataFile = getTestDataFileName();
@@ -57,7 +55,9 @@ function getTestDataFileName() {
 
 function getAppTestValue(name, key) {
   if (!data) {
-    console.error(`No data for tests has been loaded, please ensure you have a valid file for testing at ${getTestDataFileName()}.`);
+    console.error(
+      `No data for tests has been loaded, please ensure you have a valid file for testing at ${getTestDataFileName()}.`,
+    );
     return null;
   }
 
@@ -69,7 +69,7 @@ function getAppTestValue(name, key) {
       const keyPath = key.split('.');
 
       let target = application;
-      keyPath.forEach(key => {
+      keyPath.forEach((key) => {
         if (target) {
           target = target[key];
         }
