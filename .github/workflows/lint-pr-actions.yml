@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
       - uses: reviewdog/action-actionlint@5c714fa8ca7b5ea8d929d273ed5bb2e3a4a7c019 # v1
         with:
-          actionlint_flags: -color -ignore 'SC2086' -ignore 'SC2129'
+          actionlint_flags: -ignore 'SC2086' -ignore 'SC2129'
           fail_on_error: false
           level: error
           reporter: github-pr-review
