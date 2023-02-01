@@ -26,7 +26,7 @@ on:
 
 # One build per branch, cancel out of date builds
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-skipped
   cancel-in-progress: true
 
 jobs:
@@ -34,5 +34,6 @@ jobs:
     name: Lint Actions Workflows
     runs-on: ubuntu-22.04
     timeout-minutes: 5
+    if: ${{ !github.event.pull_request.draft }}
     steps:
       - run: echo "This workflow is a placeholder for PRs that don't require linting of Github Actions workflows"

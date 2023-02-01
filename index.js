@@ -1,41 +1,48 @@
-const core = require('@actions/core')
-  , githubApplication = require('./lib/github-application')
-  ;
 const process = require('process');
+const core = require('@actions/core'),
+  githubApplication = require('./lib/github-application');
 
 async function run() {
   let app;
 
   try {
-    const privateKey = getRequiredInputValue('application_private_key')
-      , applicationId = getRequiredInputValue('application_id')
-      , githubApiBaseUrl = core.getInput('github_api_base_url') || process.env['GITHUB_API_URL'] || 'https://api.github.com'
-      ;
+    const privateKey = getRequiredInputValue('application_private_key'),
+      applicationId = getRequiredInputValue('application_id'),
+      githubApiBaseUrl =
+        core.getInput('github_api_base_url') ||
+        process.env['GITHUB_API_URL'] ||
+        'https://api.github.com';
     app = await githubApplication.create(privateKey, applicationId, githubApiBaseUrl);
   } catch (err) {
-    fail(err, 'Failed to initialize GitHub Application connection using provided id and private key');
+    fail(
+      err,
+      'Failed to initialize GitHub Application connection using provided id and private key',
+    );
   }
 
   if (app) {
     core.info(`Found GitHub Application: ${app.name}`);
 
     try {
-      const userSpecifiedOrganization = core.getInput('organization')
-        , repository = process.env['GITHUB_REPOSITORY']
-        , repoParts = repository.split('/')
-      ;
-
+      const userSpecifiedOrganization = core.getInput('organization'),
+        repository = process.env['GITHUB_REPOSITORY'],
+        repoParts = repository.split('/');
       let installationId;
 
       if (userSpecifiedOrganization) {
-        core.info(`Obtaining application installation for organization: ${userSpecifiedOrganization}`);
+        core.info(
+          `Obtaining application installation for organization: ${userSpecifiedOrganization}`,
+        );
 
         // use the organization specified to get the installation
         const installation = await app.getOrganizationInstallation(userSpecifiedOrganization);
         if (installation && installation.id) {
           installationId = installation.id;
         } else {
-          fail(null, `GitHub Application is not installed on the specified organization: ${userSpecifiedOrganization}`);
+          fail(
+            null,
+            `GitHub Application is not installed on the specified organization: ${userSpecifiedOrganization}`,
+          );
         }
       } else {
         core.info(`Obtaining application installation for repository: ${repository}`);
@@ -58,7 +65,11 @@ async function run() {
             let [pName, pLevel] = p.split(':', 2);
             permissions[pName.trim()] = pLevel.trim();
           }
-          core.info(`Requesting limitation on GitHub Application permissions to only: ${JSON.stringify(permissions)}`);
+          core.info(
+            `Requesting limitation on GitHub Application permissions to only: ${JSON.stringify(
+              permissions,
+            )}`,
+          );
         }
 
         const accessToken = await app.getInstallationAccessToken(installationId, permissions);
@@ -67,7 +78,7 @@ async function run() {
         core.setSecret(accessToken.token);
         core.setOutput('token', accessToken.token);
         core.info(JSON.stringify(accessToken));
-        core.info('Successfully generated an access token for application.')
+        core.info('Successfully generated an access token for application.');
       } else {
         fail('No installation of the specified GitHub application was able to be retrieved.');
       }

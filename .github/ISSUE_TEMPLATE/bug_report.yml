@@ -1,7 +1,7 @@
 #### THIS FILE IS MANAGED BY AN AUTOMATED WORKFLOW ####
 
 name: 🐛 Bug report
-description: Create a report to help us improve
+description: Create a bug report to help us improve
 labels: ["bug"]
 body:
   - type: textarea
@@ -32,19 +32,20 @@ body:
       required: false
 
   - type: textarea
+    id: suggestion
+    attributes:
+      label: 🤔 Suggestion
+      description: |
+        Any suggestions on how to fix the bug?
+    validations:
+      required: false
+
+
+  - type: textarea
     id: screenshots
     attributes:
       label: 🖼️ Screenshots
       description: |
         If applicable, add screenshots to help explain your problem.
-    validations:
-      required: false
-
-  - type: textarea
-    id: environment
-    attributes:
-      label: ⚙️ Environment
-      description: |
-        Action version: [e.g. v1.0.0]
     validations:
       required: false
