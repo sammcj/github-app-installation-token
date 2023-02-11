@@ -27,7 +27,7 @@
   "dependencies": {
     "@actions/core": "1.10.0",
     "@actions/github": "5.1.1",
-    "@vercel/ncc": "0.36.0",
+    "@vercel/ncc": "0.36.1",
     "jsonwebtoken": "8.5.1"
   },
   "devDependencies": {
@@ -38,6 +38,6 @@
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-prettier": "4.2.1",
     "mocha": "10.2.0",
-    "prettier": "2.8.1"
+    "prettier": "2.8.4"
   }
 }
