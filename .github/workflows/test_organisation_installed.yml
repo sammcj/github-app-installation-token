@@ -45,7 +45,6 @@ jobs:
         with:
           github-token: ${{ steps.use_action.outputs.token }}
           script: |
-            const context = github.context;
             const repo = await github.repos.get({owner: 'CattleDip', repo: 'demo-gha-install-token'});
             console.log(JSON.stringify(repo, null, 2));
 

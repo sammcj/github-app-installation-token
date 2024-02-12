@@ -44,8 +44,10 @@ jobs:
         with:
           github-token: ${{ steps.use_action.outputs.token }}
           script: |
-            const context = github.context;
-            const repo = await github.repos.get(context.repo);
+            const repo = await github.repos.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
             console.log(JSON.stringify(repo, null, 2));
 
       - name: Use token to checkout repository
