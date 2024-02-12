@@ -4,8 +4,9 @@ import { createGitHubApplication } from './lib/github-application.js';
 
 async function run() {
   try {
-    const privateKey = getInput('application_private_key', { required: true }) ?? process.env.GITHUB_APPLICATION_PRIVATE_KEY;
-    const applicationId = getInput('application_id', { required: true }) ?? process.env.GITHUB_APPLICATION_ID;
+    // read process.env.GITHUB_APPLICATION_PRIVATE_KEY to a string
+    const privateKey = getInput('application_private_key', { required: true })
+    const applicationId = getInput('application_id', { required: true })
     const githubApiBaseUrl =
       getInput('github_api_base_url') ?? process.env.GITHUB_API_URL ?? 'https://api.github.com';
 
