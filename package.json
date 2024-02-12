@@ -17,7 +17,7 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "npx @vercel/ncc build -m index.js --minify --v8-cache",
+    "build": "npx @vercel/ncc build -m index.js --v8-cache",
     "check-prettier": "npm run prettier --fix",
     "clean-packages": "npx npm-check",
     "lint": "eslint --ignore-path .gitignore --max-warnings 0 \"./**/*.{js,ts}\" --fix",
@@ -36,7 +36,7 @@
     "@types/jest": "29.5.12",
     "@types/jsonwebtoken": "9.0.5",
     "@vercel/ncc": "0.38.1",
-    "chai": "5.0.3",
+    "chai": "5.1.0",
     "env": "0.0.2",
     "eslint": "8.56.0",
     "eslint-config-prettier": "9.1.0",
