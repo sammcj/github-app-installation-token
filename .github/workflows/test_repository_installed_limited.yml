@@ -30,14 +30,14 @@ jobs:
           permissions: "contents:read,actions:read"
 
       - name: Use token to read details
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.use_action.outputs.token }}
           script: |
-            const repo = await github.repos.get({
+            const repo = github.rest.repos.get({
               owner: context.repo.owner,
-              repo: context.repo.repo
-            });
+              repo: context.repo.repo,
+            })
             console.log(JSON.stringify(repo, null, 2));
 
       - name: Use token to checkout repository

@@ -41,11 +41,14 @@ jobs:
           organization: CattleDip
 
       - name: Use token to read details
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.use_action.outputs.token }}
           script: |
-            const repo = await github.repos.get({owner: 'CattleDip', repo: 'demo-gha-install-token'});
+            const repo = github.rest.repos.get({
+              owner: 'CattleDip',
+              repo: 'demo-gha-install-token',
+            })
             console.log(JSON.stringify(repo, null, 2));
 
       - name: Use token to checkout repository

@@ -40,14 +40,14 @@ jobs:
           application_private_key: ${{ secrets.GHA_APPLICATION_PRIVATE_KEY }}
 
       - name: Use token to read details
-        uses: actions/github-script@v6 # v6
+        uses: actions/github-script@v7 # v6
         with:
           github-token: ${{ steps.use_action.outputs.token }}
           script: |
-            const repo = await github.repos.get({
+            const repo = github.rest.repos.get({
               owner: context.repo.owner,
-              repo: context.repo.repo
-            });
+              repo: context.repo.repo,
+            })
             console.log(JSON.stringify(repo, null, 2));
 
       - name: Use token to checkout repository
