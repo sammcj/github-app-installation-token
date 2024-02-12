@@ -7,7 +7,7 @@ async function run() {
     const privateKey = getInput('application_private_key', { required: true });
     const applicationId = getInput('application_id', { required: true });
     const githubApiBaseUrl =
-      getInput('github_api_base_url') || process.env.GITHUB_API_URL || 'https://api.github.com';
+      getInput('github_api_base_url') || process.env.GITHUB_API_URL || 'https://api.github.com/v3';
 
     const app = await createGitHubApplication(privateKey, applicationId, githubApiBaseUrl);
     info(`Found GitHub Application: ${app.metadata.name} (id: ${app.metadata.id})`);
