@@ -1,16 +1,27 @@
 import process from 'process';
 import { getInput, info, setSecret, setOutput, setFailed } from '@actions/core';
 import { createGitHubApplication } from './lib/github-application.js';
+import PrivateKey from './lib/private-key.js';
 
 async function run() {
   try {
-    // read process.env.GITHUB_APPLICATION_PRIVATE_KEY to a string
-    const privateKey = getInput('application_private_key', { required: true })
-    const applicationId = getInput('application_id', { required: true })
+    const privateKeyInput = getInput('application_private_key', { required: true });
+    const applicationId = getInput('application_id', { required: true });
     const githubApiBaseUrl =
       getInput('github_api_base_url') ?? process.env.GITHUB_API_URL ?? 'https://api.github.com';
 
+    // Validate and decode privateKey using PrivateKey class
+    let privateKey;
+    try {
+      privateKey = new PrivateKey(privateKeyInput).key;
+    } catch (error) {
+      throw new Error(`Invalid private key format: ${error.message}`);
+    }
+
     const app = await createGitHubApplication(privateKey, applicationId, githubApiBaseUrl);
+    if (!app.metadata || !app.metadata.id) {
+      throw new Error(`Could not retrieve metadata for GitHub Application with ID: ${applicationId}`);
+    }
     info(`Found GitHub Application: ${app.metadata.name} (id: ${app.metadata.id})`);
 
     const userSpecifiedOrganization = getInput('organization');
@@ -57,7 +68,7 @@ async function run() {
     setOutput('token', accessToken.token);
     info('Successfully generated an access token for application.');
   } catch (err) {
-    setFailed(err.message || 'Failed to execute GitHub application token generation script.');
+    setFailed(`Error in run: ${err.message || 'Unknown error occurred.'}`);
   }
 }
 
