@@ -4,10 +4,10 @@ import { createGitHubApplication } from './lib/github-application.js';
 
 async function run() {
   try {
-    const privateKey = getInput('application_private_key', { required: true });
-    const applicationId = getInput('application_id', { required: true });
+    const privateKey = getInput('application_private_key', { required: true }) ?? process.env.GITHUB_APPLICATION_PRIVATE_KEY;
+    const applicationId = getInput('application_id', { required: true }) ?? process.env.GITHUB_APPLICATION_ID;
     const githubApiBaseUrl =
-      getInput('github_api_base_url') || process.env.GITHUB_API_URL || 'https://api.github.com/v3';
+      getInput('github_api_base_url') ?? process.env.GITHUB_API_URL ?? 'https://api.github.com';
 
     const app = await createGitHubApplication(privateKey, applicationId, githubApiBaseUrl);
     info(`Found GitHub Application: ${app.metadata.name} (id: ${app.metadata.id})`);
