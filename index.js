@@ -43,6 +43,7 @@ async function run() {
     }
 
     const permissionsInput = getInput('permissions');
+    info(`Permissions: ${permissionsInput}`);
     const permissions = permissionsInput.split(',').reduce((acc, curr) => {
       const [name, level] = curr.split(':').map(part => part.trim());
       acc[name] = level;
