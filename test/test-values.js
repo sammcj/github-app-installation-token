@@ -1,5 +1,3 @@
-'use strict';
-
 import { env } from 'process';
 
 import { platform } from 'os';
@@ -33,7 +31,8 @@ function loadData() {
       data = JSON.parse(fileContent);
     } catch (err) {
       console.error(`Failed to parse data file ${testDataFile}: ${err.message}`);
-      data = null;
+      // raise the error
+      throw err;
     }
   }
 

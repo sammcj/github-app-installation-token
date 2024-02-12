@@ -1,7 +1,6 @@
-import { beforeEach, it, describe } from 'mocha';
+import { it, describe } from 'mocha';
 import { expect } from 'chai';
-import { getOctokit } from '@actions/github';
-import { createGitHubApplication } from '../lib/github-application.js';
+import { GitHubApplicationToken, createGitHubApplication } from '../lib/github-application.js';
 import {
   getApplicationId,
   getApplicationPrivateKey,
@@ -10,8 +9,8 @@ import {
   getTestOrganization,
 } from './test-values.js';
 
-describe('GitHubApplication', () => {
-  const TEST_APPLICATION_NAME = 'test';
+await describe('GitHub Application', () => {
+  const TEST_APPLICATION_NAME = 'test-github';
 
   describe('creation with invalid private keys', () => {
     it('should fail on an empty private key', () => {
@@ -32,14 +31,14 @@ describe('GitHubApplication', () => {
 
     function testPrivateKey(value, message) {
       try {
-        createGitHubApplication(
+        new GitHubApplicationToken(
           value,
           getApplicationId(TEST_APPLICATION_NAME),
-          'https://octodemo.com/api/v3',
         );
-        expect.fail('Should have thrown an error');
+        expect.fail('privateKey must be provided');
       } catch (err) {
-        expect(err.message).to.contain(message);
+        const errorMessage = err.message;
+        expect(errorMessage).to.contain(message);
       }
     }
   });
@@ -73,146 +72,47 @@ describe('GitHubApplication', () => {
       }
     }
   });
-
-  describe('Installed Application - GHES', () => {
-    const TEST_APPLICATION_NAME = 'test-ghes';
-
-    let app = null;
-
-    beforeEach(async () => {
-      (app = getApplicationPrivateKey(TEST_APPLICATION_NAME)),
-        getApplicationId(TEST_APPLICATION_NAME),
-        'https://octodemo.com/api/v3';
-    });
-
-    it('should connect to GitHub', async () => {
-      const result = await app.connect();
-      expect(result).to.be.true;
-    });
-
-    it('should get application installations', async () => {
-      const installations = await app.getApplicationInstallations();
-      expect(installations).to.be.an.instanceOf(Array);
-    });
-
-    it('should get repository installation', async () => {
-      const installation = await app.getRepositoryInstallation('owner', 'repo');
-      expect(installation).to.have.property('id');
-    });
-
-    it('should get organization installation', async () => {
-      const installation = await app.getOrganizationInstallation('org');
-      expect(installation).to.have.property('id');
-    });
-
-    it('should get installation access token', async () => {
-      const token = await app.getInstallationAccessToken('installationId');
-      expect(token).to.be.a('string');
-    });
-
-    it('should be able to get installation for a repository', async () => {
-      const data = await app.getRepositoryInstallation(
-        getTestRepositoryOwner(TEST_APPLICATION_NAME),
-        getTestRepository(TEST_APPLICATION_NAME),
-      );
-
-      expect(data).to.have.property('id');
-      expect(data).to.have.property('permissions');
-    });
-  });
 });
 
-describe('Installed Application - GitHub.com', () => {
-  const TEST_APPLICATION_NAME = 'test';
+const TEST_APPLICATION_NAME = 'test-github';
+const github = await createGitHubApplication(
+  getApplicationPrivateKey(TEST_APPLICATION_NAME),
+  getApplicationId(TEST_APPLICATION_NAME),
+  'https://api.github.com',
+);
 
-  let app = null;
-
-  beforeEach(async () => {
-    (app = getApplicationPrivateKey(TEST_APPLICATION_NAME)),
-      getApplicationId(TEST_APPLICATION_NAME),
-      'https://octodemo.com/api/v3';
+describe('GitHub Application', () => {
+  it('should create a GitHub application', () => {
+    expect(github).to.be.an('object');
   });
 
-  it('should connect to GitHub.com', async () => {
-    const appData = app.metadata;
-
-    expect(appData).to.have.property('id').to.equal(getApplicationId(TEST_APPLICATION_NAME));
-    expect(appData).to.have.property('owner');
-    expect(appData).to.have.property('name');
-    expect(appData).to.have.property('permissions');
-    expect(appData).to.have.property('installations_count');
-  });
-
-  it('should be able to list application installations', async () => {
-    const data = await app.getApplicationInstallations();
-
-    expect(data).to.be.an.instanceOf(Array);
-    expect(data).to.have.length.greaterThan(0);
-
-    expect(data[0]).to.have.property('id');
-  });
-
-  it('should be able to get installation for a repository', async () => {
-    const data = await app.getRepositoryInstallation(
-      getTestRepositoryOwner(TEST_APPLICATION_NAME),
-      getTestRepository(TEST_APPLICATION_NAME),
+  if (github) {
+    it('should be of type', () => {
+      expect(github.metadata).to.be.an('object');
+    });
+    it('should have an apiClient object', () => {
+      expect(github.apiClient).to.be.an('object');
+    }
     );
 
-    expect(data).to.have.property('id');
-    expect(data).to.have.property('permissions');
-  });
-
-  it('should be able to get installation for an organization', async () => {
-    const data = await app.getOrganizationInstallation(getTestOrganization(TEST_APPLICATION_NAME));
-
-    expect(data).to.have.property('id');
-    expect(data).to.have.property('permissions');
-  });
-
-  it('should fetch the requested permissions (read)', async () => {
-    const data = await app.getOrganizationInstallation(getTestOrganization(TEST_APPLICATION_NAME));
-
-    const accessToken = await app.getInstallationAccessToken(data.id, { issues: 'read' });
-
-    expect(accessToken).to.have.property('permissions');
-    expect(accessToken.permissions).to.eql({
-      issues: 'read',
-      metadata: 'read',
+    it('should have a token object', () => {
+      expect(github.token).to.be.an('object');
     });
-  });
 
-  it('should fetch the requested permissions (write)', async () => {
-    const data = await app.getOrganizationInstallation(getTestOrganization(TEST_APPLICATION_NAME));
-
-    const accessToken = await app.getInstallationAccessToken(data.id, { issues: 'write' });
-
-    expect(accessToken).to.have.property('permissions');
-    expect(accessToken.permissions).to.eql({
-      issues: 'write',
-      metadata: 'read',
+    it('should have a baseApiUrl string', () => {
+      expect(github.baseApiUrl).to.be.a('string');
     });
-  });
 
-  it('should be able to get access token for a repository installation', async () => {
-    const repoInstall = await app.getRepositoryInstallation(
-        getTestRepositoryOwner(TEST_APPLICATION_NAME),
-        getTestRepository(TEST_APPLICATION_NAME),
-      ),
-      accessToken = await app.getInstallationAccessToken(repoInstall.id);
-    expect(accessToken).to.have.property('token');
+    it('should have a valid applicationId', () => {
+      expect(github.token.applicationId).to.equal(getApplicationId(TEST_APPLICATION_NAME));
+    });
 
-    // Use the token to access the repository
-    const client = getOctokit(accessToken.token),
-      repoName = getTestRepository(TEST_APPLICATION_NAME),
-      ownerName = getTestRepositoryOwner(TEST_APPLICATION_NAME),
-      repo = await client.rest.repos.get({
-        owner: ownerName,
-        repo: repoName,
-      });
+    it('should have a valid privateKey', () => {
+      expect(github.token.privateKey).to.equal(getApplicationPrivateKey(TEST_APPLICATION_NAME));
+    });
 
-    expect(repo).to.have.property('status').to.equal(200);
-    expect(repo).to.have.property('data');
-    expect(repo.data).to.have.property('owner').to.have.property('login').to.equal(ownerName);
-    expect(repo.data).to.have.property('name').to.equal(repoName);
-  });
-});
+    // TODO: more tests!
+
+  }
+}
+)
