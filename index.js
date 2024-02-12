@@ -5,15 +5,22 @@ import { createGitHubApplication } from './lib/github-application.js';
 async function run() {
   try {
     const privateKeyInput = getInput('application_private_key', { required: true }).replace(/\\n/g, '\n');
+    // output a the number of characters in the private key
+    info(`Redacted Private Key: ${'*'.repeat(privateKeyInput.length - 10)}${privateKeyInput.substring(privateKeyInput.length - 10)}`);
     const applicationId = getInput('application_id', { required: true });
+    // output the first number of the application id
+    info(`Redacted Application id: ${applicationId.substring(0, 3)}...`);
     const githubApiBaseUrl = getInput('github_api_base_url') ?? process.env.GITHUB_API_URL ?? 'https://api.github.com';
+    info(`GitHub API Base URL: ${githubApiBaseUrl}`);
 
     console.log('Creating GitHub Application...');
     const app = await createGitHubApplication(privateKeyInput, applicationId, githubApiBaseUrl);
     console.log(`GitHub Application created: ${app.metadata.name} (id: ${app.metadata.id})`);
 
     const userSpecifiedOrganization = getInput('organization');
+    info(`Organization: ${userSpecifiedOrganization}`);
     const repository = process.env['GITHUB_REPOSITORY'] ?? '';
+    info(`Repository: ${repository}`);
     const repoParts = repository.split('/');
     let installationId;
 
