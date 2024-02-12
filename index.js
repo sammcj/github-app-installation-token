@@ -5,11 +5,15 @@ import { createGitHubApplication } from './lib/github-application.js';
 async function run() {
   try {
     const privateKeyInput = getInput('application_private_key', { required: true }).replace(/\\n/g, '\n');
-    // output a the number of characters in the private key
-    info(`Redacted Private Key: ${'*'.repeat(privateKeyInput.length - 10)}${privateKeyInput.substring(privateKeyInput.length - 10)}`);
+    // output an error if the private key is empty
+    if (!privateKeyInput) {
+      throw new Error('Private Key is empty');
+    }
     const applicationId = getInput('application_id', { required: true });
-    // output the first number of the application id
-    info(`Redacted Application id: ${applicationId.substring(0, 3)}...`);
+    // output an error if the application id is empty
+    if (!applicationId) {
+      throw new Error('Application Id is empty');
+    }
     const githubApiBaseUrl = 'https://api.github.com';
     info(`GitHub API Base URL: ${githubApiBaseUrl}`);
 
