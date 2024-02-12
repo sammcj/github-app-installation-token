@@ -1,41 +1,36 @@
 'use strict';
 
-const process = require('process');
+import { env } from 'process';
 
-const os = require('os'),
-  path = require('path'),
-  fs = require('fs');
+import { platform } from 'os';
+import { join } from 'path';
+import { existsSync, readFileSync } from 'fs';
 const data = loadData();
 
-module.exports = {
-  getApplicationId: function (appName) {
-    return getAppTestValue(appName, 'applicationId');
-  },
-
-  getApplicationPrivateKey: function (appName) {
-    return getAppTestValue(appName, 'privateKey');
-  },
-
-  getTestRepository: function (appName) {
-    return getAppTestValue(appName, 'repo.repo');
-  },
-
-  getTestRepositoryOwner: function (appName) {
-    return getAppTestValue(appName, 'repo.owner');
-  },
-
-  getTestOrganization: function (appName) {
-    return getAppTestValue(appName, 'org');
-  },
-};
+export function getApplicationId(appName) {
+  return getAppTestValue(appName, 'applicationId');
+}
+export function getApplicationPrivateKey(appName) {
+  return getAppTestValue(appName, 'privateKey');
+}
+export function getTestRepository(appName) {
+  return getAppTestValue(appName, 'repo.repo');
+}
+export function getTestRepositoryOwner(appName) {
+  return getAppTestValue(appName, 'repo.owner');
+}
+export function getTestOrganization(appName) {
+  return getAppTestValue(appName, 'org');
+}
 
 function loadData() {
   const testDataFile = getTestDataFileName();
 
   let data = null;
-  if (fs.existsSync(testDataFile)) {
+  if (existsSync(testDataFile)) {
     try {
-      data = JSON.parse(fs.readFileSync(testDataFile));
+      const fileContent = readFileSync(testDataFile, 'utf8'); // Convert buffer to string
+      data = JSON.parse(fileContent);
     } catch (err) {
       console.error(`Failed to parse data file ${testDataFile}: ${err.message}`);
       data = null;
@@ -46,10 +41,10 @@ function loadData() {
 }
 
 function getTestDataFileName() {
-  if (os.platform() === 'win32') {
-    return path.join(process.env.LOCALAPPDATA, '.github_application');
+  if (platform() === 'win32') {
+    return join(env.LOCALAPPDATA || '', '.github_application');
   } else {
-    return path.join(process.env.HOME, '.github_application');
+    return join(env.HOME || '', '.github_application');
   }
 }
 
