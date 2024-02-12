@@ -10,7 +10,7 @@ async function run() {
     const applicationId = getInput('application_id', { required: true });
     // output the first number of the application id
     info(`Redacted Application id: ${applicationId.substring(0, 3)}...`);
-    const githubApiBaseUrl = getInput('github_api_base_url') ?? process.env.GITHUB_API_URL ?? 'https://api.github.com';
+    const githubApiBaseUrl = 'https://api.github.com';
     info(`GitHub API Base URL: ${githubApiBaseUrl}`);
 
     console.log('Creating GitHub Application...');
