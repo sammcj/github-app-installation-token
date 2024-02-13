@@ -12,6 +12,10 @@ inputs:
     description: GitHub Application ID value.
     required: true
 
+  application_installation_id:
+    description: GitHub Install Application ID value.
+    required: false
+
   permissions:
     description: "The permissions to request e.g. issues:read,secrets:write,packages:read. Defaults to all available permissions"
     required: false
@@ -29,7 +33,7 @@ outputs:
     description: A valid token representing the Application that can be used to access what the Application has been scoped to access.
 
 runs:
-  using: node16
+  using: node20
   main: dist/index.js
 
 branding:

@@ -17,6 +17,7 @@ It is a fork of [Peter Murray's workflow-application-token-action](https://githu
     - [Creating a GitHub Application](#creating-a-github-application)
       - [Install the GitHub Application](#install-the-github-application)
   - [Contributions](#contributions)
+    - [Development](#development)
   - [Security](#security)
 
 ## Use Cases
@@ -186,6 +187,15 @@ Credit to following projects:
 - [peter-murray's workflow-application-token-action](https://github.com/peter-murray/workflow-application-token-action).
 
 As always - pull requests are welcomed.
+
+### Development
+
+```shell
+npm ci
+npm run lint
+npm run test
+npm run build # Required as uses ncc to compile the action
+```
 
 ## Security
 

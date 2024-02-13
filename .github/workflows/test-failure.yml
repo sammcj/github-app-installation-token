@@ -1,6 +1,6 @@
-# Tests this action failure by the application not being installed on the repository
+# Tests this action failure by the application not being installed on the repository / organisation
 
-name: Test Failure - repository - not installed
+name: This test should fail
 
 on:
   workflow_dispatch:
