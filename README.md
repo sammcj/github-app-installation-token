@@ -4,9 +4,7 @@
 [![Stable Version](https://img.shields.io/github/v/tag/sammcj/github-app-installation-token)](https://img.shields.io/github/v/tag/sammcj/github-app-installation-token)
 [![Latest Release](https://img.shields.io/github/v/release/sammcj/github-app-installation-token?color=%233D9970)](https://img.shields.io/github/v/release/sammcj/github-app-installation-token?color=%233D9970)
 
-This [JavaScript GitHub Action](https://help.github.com/en/actions/building-actions/about-actions#javascript-actions) can be used to impersonate a GitHub App.
-
-It is a fork of [Peter Murray's workflow-application-token-action](https://github.com/peter-murray/workflow-application-token-action).
+This [JavaScript GitHub Action](https://help.github.com/en/actions/building-actions/about-actions#javascript-actions) can be used to act as a GitHub App that with a private key and installation ID to generate a short lived (and optionally de-scoped) token that can be used to authenticate with the GitHub API.
 
 - [GitHub App Token Authoriser](#github-app-token-authoriser)
   - [Use Cases](#use-cases)
@@ -55,11 +53,10 @@ jobs:
         uses: actions/checkout@v3
         env:
           GITHUB_TOKEN: ${{ steps.get_workflow_token.outputs.token }}
-        with:
           ....
 ```
 
-Get a token with a limited subset of the permissions of the Github Application, in this case just the `actions:write` permission
+Get a token with a limited subset of the permissions of the Github Application, in this case adding the `actions:write` and `issues:read` permissions.
 
 ```yaml
 jobs:
@@ -72,7 +69,7 @@ jobs:
         with:
           application_id: ${{ secrets.GHA_APPLICATION_ID }}
           application_private_key: ${{ secrets.GHA_APPLICATION_PRIVATE_KEY }}
-          permissions: "actions:write"
+          permissions: "actions:write,issues:read"
 
       - name: Use Application Token to checkout a repository
         uses: actions/checkout@v3
@@ -132,6 +129,12 @@ inputs:
 outputs:
   token:
     description: A valid token representing the Application that can be used to access what the Application has been scoped to access.
+  permissions_requested:
+    description: The permissions that were requested for the token, if not specified will be your default permissions.
+  permissions_granted:
+    description: The permissions that were granted for the token.
+  expires_at:
+    description: The date and time that the token will expire in UTC.
 ```
 
 ## Requirements
@@ -178,17 +181,31 @@ the GitHub Actions workflow from, as the implementation requires this to be able
 
 ## Contributions
 
-This action is built with inspiration from several sources, taking the best bits and adding some modernisation.
-
-Credit to following projects:
-
-- [tibdex's github app token Action](https://github.com/tibdex/github-app-token)
-  - [jwenz's fork of tibdex](https://github.com/jwenz723/github-app-installation-token) but updated significantly.
-- [peter-murray's workflow-application-token-action](https://github.com/peter-murray/workflow-application-token-action).
-
 As always - pull requests are welcomed.
 
 ### Development
+
+First set the following environment variables:
+
+- `GITHUB_APPLICATION_PRIVATE_KEY` - The private key for the GitHub Application
+- `GITHUB_APPLICATION_ID` - The ID of the GitHub Application
+
+and either:
+
+- `GITHUB_ORGANIZATION` - The GitHub Organisation to get the application installation for, if not specified will use the current repository instead
+or
+- `GITHUB_REPOSITORY_OWNER=<user>` - The GitHub Repository Owner to get the application installation for, if not specified will use the current repository instead
+
+e.g:
+
+```shell
+export GITHUB_APPLICATION_PRIVATE_KEY='-----BEGIN RSA PRIVATE KEY-----\\n<your private key>\\n-----END RSA PRIVATE KEY-----'
+export GITHUB_APPLICATION_ID=<applicationId>
+export GITHUB_ORGANIZATION=<organisation>
+export GITHUB_REPOSITORY_OWNER=<owner>
+```
+
+Then run the following commands:
 
 ```shell
 npm ci

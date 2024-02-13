@@ -21,12 +21,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
-permissions:
-  contents: read
-  actions: read
-  packages: read
-  deployments: read
-
 jobs:
   # Not currently used
   # test-installed-repo:
@@ -81,6 +75,15 @@ jobs:
 
   test-installed-limited:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      packages: write
+      deployments: write
+    outputs:
+      expires_at: ${{ steps.use_action.outputs.expires_at }}
+      permissions_requested: ${{ steps.use_action.outputs.permissions_requested }}
+      permissions_granted: ${{ steps.use_action.outputs.permissions_granted }}
 
     steps:
       - name: Checkout
@@ -93,7 +96,7 @@ jobs:
           application_id: ${{ secrets.GHA_APPLICATION_ID }}
           application_private_key: ${{ secrets.GHA_APPLICATION_PRIVATE_KEY }}
           organization: CattleDip
-          permissions: "contents:read,actions:read,packages:read,deployments:read,workflows:read"
+          permissions: "pages:read,checks:read,issues:read,actions:read,contents:read,metadata:read,packages:write,statuses:read,deployments:write,discussions:read,environments:read,merge_queues:read,pull_requests:read,administration:read,repository_hooks:read,organization_administration:read"
 
       - name: Use token to read details
         uses: actions/github-script@v7
@@ -103,17 +106,52 @@ jobs:
             const repo = github.rest.repos.get({
               owner: 'CattleDip',
               repo: 'demo-gha-install-token',
+              branch: 'main',
             })
             console.log(JSON.stringify(repo, null, 2));
+
+      - name: Check permissions
+        shell: bash
+        run: |
+          set -e
+          EXPIRES_AT="${{ steps.use_action.outputs.expires_at }}"
+          PERMISSIONS_REQUESTED="${{ steps.use_action.outputs.permissions_requested }}"
+          PERMISSIONS_GRANTED="${{ steps.use_action.outputs.permissions_granted }}"
+          if [[ -z "$EXPIRES_AT" ]]; then
+            echo "No token was generated" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          if [[ -z "$PERMISSIONS_REQUESTED" ]]; then
+            echo "No permissions were requested" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          if [[ -z "$PERMISSIONS_GRANTED" ]]; then
+            echo "No permissions were granted" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          if [[ "$PERMISSIONS_REQUESTED" != "$PERMISSIONS_GRANTED" ]]; then
+            echo "Permissions requested and granted do not match" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          echo "---" >> "$GITHUB_STEP_SUMMARY"
+          echo "Permissions requested and granted match" >> "$GITHUB_STEP_SUMMARY"
+          echo "Permissions requested: $PERMISSIONS_REQUESTED" >> "$GITHUB_STEP_SUMMARY"
+          echo "Permissions granted: $PERMISSIONS_GRANTED" >> "$GITHUB_STEP_SUMMARY"
+          echo "---" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Use token to checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           token: ${{ steps.use_action.outputs.token }}
-          repository: sammcj/demo-gha-install-token
+          repository: CattleDip/demo-gha-install-token
 
   test-installed-org:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      packages: read
+      deployments: read
     steps:
       - name: Checkout specified branch
         if: github.event_name == 'workflow_dispatch'
@@ -156,7 +194,7 @@ jobs:
     if: success() && github.ref == 'refs/heads/main'
     needs:
       # - test-installed-repo
-      # - test-installed-limited #TODO: get working
+      - test-installed-limited #TODO: get working
       - test-installed-org
     permissions:
       contents: write
