@@ -1,13 +1,25 @@
 module.exports = {
   env: {
     browser: true,
-    commonjs: true,
+    es2021: true,
   },
-  plugins: ['deprecation', 'import', 'prettier', 'import'],
-  extends: ['eslint:recommended', 'prettier', 'plugin:import/recommended'],
+  plugins: ['import', 'prettier'],
+  extends: ['plugin:prettier/recommended', 'eslint:recommended'],
+  overrides: [
+    {
+      env: {
+        node: true,
+      },
+      files: ['.eslintrc.{js,cjs}'],
+      parserOptions: {
+        sourceType: 'script',
+        ecmaVersion: 'latest',
+      },
+    },
+  ],
   parserOptions: {
     ecmaVersion: 'latest',
-    sourceType: 'commonjs',
+    sourceType: 'module',
   },
   rules: {
     quotes: ['error', 'single', { avoidEscape: true }],
@@ -24,14 +36,25 @@ module.exports = {
     'space-before-blocks': 'error',
     curly: ['error', 'multi-line', 'consistent'],
     'no-bitwise': ['error'],
+    'no-console': 0,
     'no-trailing-spaces': ['error'],
     'no-duplicate-imports': ['error'],
     'no-shadow': 'off',
     'no-use-before-define': 'off',
+    'import/order': 'error',
+    'prettier/prettier': 'error',
     'max-classes-per-file': ['error', 3],
     'no-underscore-dangle': 'off',
     'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
-    indent: ['error', 2],
-    'max-params': ['error', 5],
   },
+  ignorePatterns: [
+    '!**/*.eslintrc.js*',
+    '!**/*.prettierrc.js*',
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/build/**',
+    '**/coverage/**',
+    '**/cdk.out/**',
+    'jest.setup.ts',
+  ],
 };
