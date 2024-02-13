@@ -147,9 +147,6 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: "npm"
-
-      # First we need to make sure the tests pass
-
       - run: |
           npm ci
           npm run build
