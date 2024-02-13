@@ -66,6 +66,18 @@ jobs:
   #         token: ${{ steps.use_action.outputs.token }}
   #         repository: sammcj/demo-gha-install-token
 
+  test-mocha:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Run tests
+        continue-on-error: true
+        run: |
+          npm ci
+          npm run test
 
   test-installed-limited:
     runs-on: ubuntu-latest
