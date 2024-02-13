@@ -71,6 +71,11 @@ jobs:
         continue-on-error: true
         run: |
           npm ci
+          echo "::add-mask::${{ secrets.GHA_APPLICATION_PRIVATE_KEY }}"
+          echo "::add-mask::${{ secrets.GHA_APPLICATION_ID }}"
+          GITHUB_APPLICATION_PRIVATE_KEY="${{ secrets.GHA_APPLICATION_PRIVATE_KEY }}"
+          GITHUB_APPLICATION_ID="${{ secrets.GHA_APPLICATION_ID }}"
+          GITHUB_REPOSITORY_OWNER=sammcj
           npm run test
 
   test-installed-limited:
@@ -113,31 +118,28 @@ jobs:
       - name: Check permissions
         shell: bash
         run: |
-          set -e
           EXPIRES_AT="${{ steps.use_action.outputs.expires_at }}"
           PERMISSIONS_REQUESTED="${{ steps.use_action.outputs.permissions_requested }}"
           PERMISSIONS_GRANTED="${{ steps.use_action.outputs.permissions_granted }}"
           if [[ -z "$EXPIRES_AT" ]]; then
-            echo "No token was generated" >> "$GITHUB_STEP_SUMMARY"
+            echo "🚨 No token was generated! 🚨" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
           if [[ -z "$PERMISSIONS_REQUESTED" ]]; then
-            echo "No permissions were requested" >> "$GITHUB_STEP_SUMMARY"
+            echo "🚨 No permissions were requested! 🚨" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
           if [[ -z "$PERMISSIONS_GRANTED" ]]; then
-            echo "No permissions were granted" >> "$GITHUB_STEP_SUMMARY"
+            echo "🚨 No permissions were granted! 🚨" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
           if [[ "$PERMISSIONS_REQUESTED" != "$PERMISSIONS_GRANTED" ]]; then
-            echo "Permissions requested and granted do not match" >> "$GITHUB_STEP_SUMMARY"
+            echo "🚨 Permissions requested and granted do not match! 🚨" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
-          echo "---" >> "$GITHUB_STEP_SUMMARY"
-          echo "Permissions requested and granted match" >> "$GITHUB_STEP_SUMMARY"
-          echo "Permissions requested: $PERMISSIONS_REQUESTED" >> "$GITHUB_STEP_SUMMARY"
-          echo "Permissions granted: $PERMISSIONS_GRANTED" >> "$GITHUB_STEP_SUMMARY"
-          echo "---" >> "$GITHUB_STEP_SUMMARY"
+          echo "Permissions requested and granted match 🎉" >> "$GITHUB_STEP_SUMMARY"
+          echo "Permissions requested: `$PERMISSIONS_REQUESTED`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Permissions granted:   `$PERMISSIONS_GRANTED`" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Use token to checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
@@ -217,6 +219,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release_branches: main
           pre_release_branches: dev
+          fetch_all_tags: true
+          default_bump: minor
       - name: Create a GitHub release
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5 # v1
         if: github.ref == 'refs/heads/main'
@@ -226,5 +230,6 @@ jobs:
           body: ${{ steps.tag_version.outputs.changelog }}
           generateReleaseNotes: true
           allowUpdates: true
+          makeLatest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
