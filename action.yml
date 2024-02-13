@@ -32,6 +32,15 @@ outputs:
   token:
     description: A valid token representing the Application that can be used to access what the Application has been scoped to access.
 
+  expires_at:
+    description: The date and time when the token will expire (UTC).
+
+  permissions_requested:
+    description: The permissions that were requested for the token.
+
+  permissions_granted:
+    description: The permissions that were granted for the token.
+
 runs:
   using: node20
   main: dist/index.js

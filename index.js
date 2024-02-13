@@ -65,8 +65,18 @@ export async function run() {
       permissions,
     });
 
+    // output the permissions actually granted in the token
+    const installation = await octokit.rest.apps.getInstallation({
+      installation_id: installationId,
+    });
+
+    const permissionsGranted = installation.data.permissions;
+
     core.setSecret(token);
     core.setOutput('token', token);
+    core.setOutput('expires_at', new Date().toISOString());
+    core.setOutput('permissions_requested', JSON.stringify(permissions));
+    core.setOutput('permissions_granted', JSON.stringify(permissionsGranted));
   } catch (error) {
     console.error('Error:', error.message);
     core.setFailed(error.message);
