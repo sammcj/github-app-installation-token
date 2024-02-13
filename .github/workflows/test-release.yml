@@ -89,7 +89,6 @@ jobs:
           token: ${{ steps.use_action.outputs.token }}
           repository: sammcj/demo-gha-install-token
 
-
   test-installed-org:
     runs-on: ubuntu-latest
     steps:
