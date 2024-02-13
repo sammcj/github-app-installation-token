@@ -6,6 +6,8 @@
 
 This [JavaScript GitHub Action](https://help.github.com/en/actions/building-actions/about-actions#javascript-actions) can be used to act as a GitHub App that with a private key and installation ID to generate a short lived (and optionally de-scoped) token that can be used to authenticate with the GitHub API.
 
+![](https://github.com/sammcj/github-app-installation-token/assets/862951/7f8011e2-ed98-4453-a007-eeabecfc84ed)
+
 - [GitHub App Token Authoriser](#github-app-token-authoriser)
   - [Use Cases](#use-cases)
   - [Example Workflows](#example-workflows)
@@ -22,7 +24,8 @@ This [JavaScript GitHub Action](https://help.github.com/en/actions/building-acti
 
 This is useful for when `secrets.GITHUB_TOKEN`'s limitations are too restrictive and a personal access token is not suitable.
 
-The repo scoped [`secrets.GITHUB_TOKEN`](https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token) has limitations such as:
+The repo scoped [`secrets.GITHUB_TOKEN`](https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token)
+has limitations such as:
 
 - Cannot be used to checkout other private or internal repositories.
 - Have their permissions scoped at the workflow level - not by admins.
@@ -30,14 +33,14 @@ The repo scoped [`secrets.GITHUB_TOKEN`](https://help.github.com/en/actions/conf
 
 A common workaround for individual use is to use a [Personal Access Token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) but this has significant security, maintenance and auditability issues.
 
-Github recommends using [GitHub Apps](https://developer.github.com/apps/differences-between-apps/#machine-vs-bot-accounts) as a workaround to automate authentication to Github Services that isn't provided out of the box by Github / Actions.
+Github recommends using [GitHub Apps](https://developer.github.com/apps/differences-between-apps/#machine-vs-bot-accounts) as a
+workaround to automate authentication to Github Services that isn't provided out of the box by Github / Actions.
 
 ## Example Workflows
 
 Get a token with all the permissions of the GitHub Application
 
 ```yaml
-
 jobs:
   get-temp-token:
     runs-on: ubuntu-latest
@@ -46,8 +49,8 @@ jobs:
         id: get_workflow_token
         uses: sammcj/github-app-installation-token@main # or a specific version
         with:
-          application_id: ${{ secrets.GHA_APPLICATION_ID }}
-          application_private_key: ${{ secrets.GHA_APPLICATION_PRIVATE_KEY }}
+          application_id: ${{ secrets.AUTHENTICATOR_APPLICATION_ID }}
+          application_private_key: ${{ secrets.AUTHENTICATOR_APPLICATION_PRIVATE_KEY }}
 
       - name: Use Application Token to checkout a repository
         uses: actions/checkout@v3
@@ -56,7 +59,8 @@ jobs:
           ....
 ```
 
-Get a token with a limited subset of the permissions of the Github Application, in this case adding the `actions:write` and `issues:read` permissions.
+Get a token with a limited subset of the permissions of the Github Application, in this case adding the
+`actions:write` and `issues:read` permissions.
 
 ```yaml
 jobs:
@@ -67,8 +71,8 @@ jobs:
         id: get_workflow_token
         sammcj/github-app-installation-token@main # or a specific version
         with:
-          application_id: ${{ secrets.GHA_APPLICATION_ID }}
-          application_private_key: ${{ secrets.GHA_APPLICATION_PRIVATE_KEY }}
+          application_id: ${{ secrets.AUTHENTICATOR_APPLICATION_ID }}
+          application_private_key: ${{ secrets.AUTHENTICATOR_APPLICATION_PRIVATE_KEY }}
           permissions: "actions:write,issues:read"
 
       - name: Use Application Token to checkout a repository
@@ -90,8 +94,8 @@ jobs:
         id: get_workflow_token
         uses: sammcj/github-app-installation-token@main # or a specific version
         with:
-          application_id: ${{ secrets.GHA_APPLICATION_ID }}
-          application_private_key: ${{ secrets.GHA_APPLICATION_PRIVATE_KEY }}
+          application_id: ${{ secrets.AUTHENTICATOR_APPLICATION_ID }}
+          application_private_key: ${{ secrets.AUTHENTICATOR_APPLICATION_PRIVATE_KEY }}
           organization: CattleDip
 
       - name: Use Application Token to checkout a repository
@@ -157,7 +161,7 @@ The important configuration details for the application are:
 - `Homepage URL` needs to be set to something as long as it is a URL
 - `Expire user authorization tokens` should be checked so as to expire any tokens that are issued
 - `Webhook` `Active` checkbox should be unchecked
-- `Repository permissions`, `Organization permissions` and/or `User permissions` should be set to allow the access required for the token that will be issued
+- `Repository permissions`, `Organization permissions` and/or `User permissions` allows the access required for the token that will be issued
 - `Where can this GitHub App be installed?` should be scoped to your desired audience (the current account, or any account)
 
 Once the application has been created you will be taken to the `General` settings page for the new application.
@@ -194,7 +198,7 @@ and either:
 
 - `GITHUB_ORGANIZATION` - The GitHub Organisation to get the application installation for, if not specified will use the current repository instead
 or
-- `GITHUB_REPOSITORY_OWNER=<user>` - The GitHub Repository Owner to get the application installation for, if not specified will use the current repository instead
+- `GITHUB_REPOSITORY_OWNER` - The GitHub Repository Owner to get the application installation for, if not specified will use the current repository instead
 
 e.g:
 
