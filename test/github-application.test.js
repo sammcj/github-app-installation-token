@@ -26,10 +26,9 @@ describe('GitHubApplication', () => {
   let app;
   const privateKey = getInput().privateKey;
   const applicationId = getInput().appId;
-  const baseApiUrl = 'https://api.github.com';
 
   beforeEach(() => {
-    app = new GitHubApplication(privateKey, applicationId, baseApiUrl);
+    app = new GitHubApplication(privateKey, applicationId);
   });
 
   it('connect', async () => {
@@ -52,6 +51,21 @@ describe('GitHubApplication', () => {
     await app.getAppInstallation(appId);
     expect(spy.calledWith(appId)).to.be.true;
     spy.restore();
+  });
+
+  it('checks token permissions as requested', async () => {
+    const requestedPermissions = { contents: 'write', issues: 'read' };
+    const formattedPermissionsInput = JSON.stringify(requestedPermissions);
+    const mockPermissions = { permissions: requestedPermissions };
+    sinon.stub(app, 'getInstallationAccessToken').returns(Promise.resolve(mockPermissions));
+    const result = await app.getInstallationAccessToken(
+      'installationId',
+      formattedPermissionsInput,
+    );
+
+    expect(result.permissions).to.deep.equal(requestedPermissions);
+
+    app.getInstallationAccessToken.restore();
   });
 
   // skip the org, user and repo tests if the environment variables are not set

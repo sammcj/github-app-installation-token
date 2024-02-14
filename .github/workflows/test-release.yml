@@ -219,6 +219,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release_branches: main
           pre_release_branches: dev
+          fetch_all_tags: true
+          default_bump: minor
       - name: Create a GitHub release
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5 # v1
         if: github.ref == 'refs/heads/main'
