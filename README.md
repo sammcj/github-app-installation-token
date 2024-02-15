@@ -76,7 +76,7 @@ jobs:
           permissions: "actions:write,issues:read"
 
       - name: Use Application Token to checkout a repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         env:
           GITHUB_TOKEN: ${{ steps.get_workflow_token.outputs.token }}
         with:
@@ -99,7 +99,7 @@ jobs:
           organization: CattleDip
 
       - name: Use Application Token to checkout a repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         env:
           GITHUB_TOKEN: ${{ steps.get_workflow_token.outputs.token }}
         with:
@@ -116,14 +116,26 @@ inputs:
   application_id:
     description: GitHub Application ID value.
     required: true
+  application_installation_id:
+    description: GitHub Install Application ID value.
+    required: false
   permissions:
     description: "The permissions to request e.g. issues:read,secrets:write,packages:read. Defaults to all available permissions"
     required: false
-  organization:
-    description: The GitHub Organization to get the application installation for, if not specified will use the current repository instead
+  org:
+    description: The GitHub Organisation to get the application installation for, if not specified will use the current repository instead. This is not normally needed as the workflow will be running in the context of a repository / org.
+    required: false
+  owner:
+    description: The GitHub Owner to get the application installation for, if not specified will use the current repository instead. This is not normally needed as the workflow will be running in the context of a repository / org.
+    required: false
+  repo:
+    description: The GitHub Repository to get the application installation for, if not specified will use the current repository instead (owner must also be specified). This is not normally needed as the workflow will be running in the context of a repository / org.
     required: false
   github_api_base_url:
-    description: The GitHub API base URL to use, no needed it working within the same GitHub instance as the workflow as it will get picked up from the environment
+    description: The GitHub API base URL to use, no needed it working within the same GitHub instance as the workflow as it will get picked up from the environment. This not usually needed and is mainly for testing purposes.
+    required: false
+  token_lifetime:
+    description: The lifetime of the token in seconds, defaults to 600 seconds (10 minutes).
     required: false
 ```
 
@@ -133,12 +145,12 @@ inputs:
 outputs:
   token:
     description: A valid token representing the Application that can be used to access what the Application has been scoped to access.
+  expires_at:
+    description: The date and time when the token will expire (UTC).
   permissions_requested:
-    description: The permissions that were requested for the token, if not specified will be your default permissions.
+    description: The permissions that were requested for the token.
   permissions_granted:
     description: The permissions that were granted for the token.
-  expires_at:
-    description: The date and time that the token will expire in UTC.
 ```
 
 ## Requirements

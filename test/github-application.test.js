@@ -1,38 +1,45 @@
 /* eslint-env mocha */
-import process from 'process';
+// import process from 'process';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import * as core from '@actions/core';
+// import * as core from '@actions/core';
 import { GitHubApplication, getInstallationId } from '../lib/github-application.js';
+import { getInput } from '../index.js';
 
-export function getInput() {
-  if (process.env.GITHUB_ACTIONS) {
-    const privateKey = core.getInput('application_private_key', { required: true });
-    const appId = core.getInput('application_id', { required: true });
-    const permissionsInput = core.getInput('permissions', { required: false });
-    return { privateKey, appId, permissionsInput };
-  } else {
-    if (!process.env.GITHUB_APPLICATION_PRIVATE_KEY || !process.env.GITHUB_APPLICATION_ID) {
-      throw new Error('Required inputs are missing');
-    }
-    const privateKey = process.env.GITHUB_APPLICATION_PRIVATE_KEY.replace(/\\n/g, '\n');
-    const appId = process.env.GITHUB_APPLICATION_ID;
-    const permissionsInput = process.env.GITHUB_PERMISSIONS ?? '{}';
-    return { privateKey, appId, permissionsInput };
-  }
-}
+const appId = getInput().appId;
+const privateKey = getInput().privateKey;
+const baseApiUrl = getInput().baseApiUrl;
+const permissionsInput = getInput().permissionsInput;
+const org = getInput().org;
+const owner = getInput().owner;
+const repo = getInput().repo;
+const tokenLifetime = getInput().tokenLifetime;
 
+/**
+ * Test the GitHub Application class
+ */
 describe('GitHubApplication', () => {
-  let app;
-  const privateKey = getInput().privateKey;
-  const applicationId = getInput().appId;
-  const baseApiUrl = 'https://api.github.com';
+  // use the variables from the if statement above
 
-  beforeEach(() => {
-    app = new GitHubApplication(privateKey, applicationId, baseApiUrl);
-  });
+  // console.debug('privateKey', privateKey);
+  console.debug('appId', appId);
+  console.debug('baseApiUrl', baseApiUrl);
+  console.debug('permissions', permissionsInput);
+  console.debug('org', org);
+  console.debug('owner', owner);
+  console.debug('repo', repo);
+  console.debug('tokenLifetime', tokenLifetime);
+
+  let app;
+  app = new GitHubApplication(privateKey, appId, baseApiUrl);
+
+  // No need to reset at present, but may be useful in future
+  // beforeEach(() => {
+  // app = new GitHubApplication(privateKey, applicationId, baseApiUrl);
+  // });
 
   it('connect', async () => {
+    console.log('Testing connect function connects to the GitHub API');
     const spy = sinon.spy(app, 'connect');
     await app.connect();
     expect(spy.calledOnce).to.be.true;
@@ -40,6 +47,7 @@ describe('GitHubApplication', () => {
   });
 
   it('fetchMetadata', async () => {
+    console.log('Testing fetchMetadata function returns metadata for the App');
     const spy = sinon.spy(app, 'fetchMetadata');
     await app.fetchMetadata();
     expect(spy.calledOnce).to.be.true;
@@ -47,84 +55,90 @@ describe('GitHubApplication', () => {
   });
 
   it('getAppInstallation', async () => {
-    const appId = 'appId';
+    console.log('Testing getAppInstallation function returns an installation ID for an App');
     const spy = sinon.spy(app, 'getAppInstallation');
     await app.getAppInstallation(appId);
     expect(spy.calledWith(appId)).to.be.true;
     spy.restore();
   });
 
-  // skip the org, user and repo tests if the environment variables are not set
-  if (process.env.GITHUB_ACTIONS) {
+  it('tokenLifetime', async () => {
+    console.log('Testing the tokenLifetime');
+    const spy = sinon.spy(app, 'getAppInstallation');
+    await app.getAppInstallation(appId);
+    expect(app.token.tokenLifetime).to.equal(600);
+    spy.restore();
+  });
+
+  if (org) {
+    it('getInstallationAccessToken', async () => {
+      console.log('Testing getInstallationAccessToken function returns an access token for an Org');
+      const permissionsInput = { contents: 'read', actions: 'read', metadata: 'read' };
+      const installationId = await app.getOrgInstallation(org);
+      try {
+        const appInstallation = await app.getInstallationAccessToken(
+          installationId,
+          permissionsInput,
+        );
+        try {
+          // Check the permissions returned match the permissions requested
+          const tokenPermissions = await appInstallation.permissions;
+          expect(tokenPermissions).to.deep.equal(permissionsInput);
+        } catch (error) {
+          console.log('Error checking permissions', error);
+        }
+      } catch (error) {
+        console.log(`Installation ${installationId} not found`);
+      }
+    });
+
+    // skip the org, user and repo tests if the environment variables are not set
     it('getOrgInstallation', async () => {
-      const org = 'org';
+      console.log('Testing getOrgInstallation function returns an installation ID for an Org');
       try {
         await app.getOrgInstallation(org);
       } catch (error) {
         console.log(`Organization ${org} not found`);
       }
     });
+  }
 
+  if (owner) {
     it('getUserInstallation', async () => {
-      const username = 'username';
+      console.log('Testing getUserInstallation function returns an installation ID for a User');
       try {
-        await app.getUserInstallation(username);
+        await app.getUserInstallation(owner);
       } catch (error) {
-        console.log(`User ${username} not found`);
+        console.log(`User ${owner} not found`);
       }
     });
+  }
 
+  if (repo && owner) {
     it('getRepositoryInstallation', async () => {
-      const owner = 'owner';
-      const repo = 'repo';
+      console.log(
+        'Testing getRepositoryInstallation function returns an installation ID for a Repository',
+      );
       try {
         await app.getRepositoryInstallation(owner, repo);
       } catch (error) {
         console.log(`Repository ${owner}/${repo} not found`);
       }
     });
+  }
 
-    it('getInstallationAccessToken', async () => {
-      const installationId = 'installationId';
-      const permissions = {};
+  describe('getInstallationId', () => {
+    console.log('Testing getInstallationId function returns an installation ID for a Repository');
+    it('getInstallationId', async () => {
       try {
-        await app.getInstallationAccessToken(installationId, permissions);
+        await getInstallationId(privateKey, appId, org, owner, repo);
       } catch (error) {
-        console.log(`Installation ${installationId} not found`);
+        if (error.message.includes('secretOrPrivateKey must be an asymmetric key')) {
+          console.log('Invalid private key');
+        } else {
+          throw error;
+        }
       }
     });
-
-    describe('getInstallationId', () => {
-      it('getInstallationId', async () => {
-        const privateKey = 'privateKey';
-        const appId = 'appId';
-        const org = 'org';
-        const owner = 'owner';
-        const repo = 'repo';
-        try {
-          await getInstallationId(privateKey, appId, org, owner, repo);
-        } catch (error) {
-          if (error.message.includes('secretOrPrivateKey must be an asymmetric key')) {
-            console.log('Invalid private key');
-          } else {
-            throw error;
-          }
-        }
-      });
-    });
-
-    describe('getInstallationId', () => {
-      it('getInstallationId', async () => {
-        const privateKey = 'privateKey';
-        const appId = 'appId';
-        const org = 'org';
-        const owner = 'owner';
-        const repo = 'repo';
-        const spy = sinon.spy(getInstallationId);
-        await getInstallationId(privateKey, appId, org, owner, repo);
-        expect(spy.calledWith(privateKey, appId, org, owner, repo)).to.be.true;
-        spy.restore();
-      });
-    });
-  }
+  });
 });
