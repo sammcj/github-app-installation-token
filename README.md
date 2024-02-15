@@ -96,7 +96,7 @@ jobs:
         with:
           application_id: ${{ secrets.AUTHENTICATOR_APPLICATION_ID }}
           application_private_key: ${{ secrets.AUTHENTICATOR_APPLICATION_PRIVATE_KEY }}
-          organization: CattleDip
+          organisation: CattleDip
 
       - name: Use Application Token to checkout a repository
         uses: actions/checkout@v4
@@ -173,7 +173,7 @@ The important configuration details for the application are:
 - `Homepage URL` needs to be set to something as long as it is a URL
 - `Expire user authorization tokens` should be checked so as to expire any tokens that are issued
 - `Webhook` `Active` checkbox should be unchecked
-- `Repository permissions`, `Organization permissions` and/or `User permissions` allows the access required for the token that will be issued
+- `Repository permissions`, `Organisation permissions` and/or `User permissions` allows the access required for the token that will be issued
 - `Where can this GitHub App be installed?` should be scoped to your desired audience (the current account, or any account)
 
 Once the application has been created you will be taken to the `General` settings page for the new application.
@@ -188,11 +188,11 @@ _Note: the private keys can and should be rotated periodically to limit the risk
 
 #### Install the GitHub Application
 
-Once you have the GitHub Application defined, you will need to install the application on the target organization or repository/
+Once you have the GitHub Application defined, you will need to install the application on the target organisation or repository/
 repositories that you want it to have access to. These will be any repositories that you want to gather information
 from or want the application to modify as per the scopes that were defined when the application was installed.
 
-_Note: The GitHub Application will need to be installed on the organization and or repository that you are executing
+_Note: The GitHub Application will need to be installed on the organisation and or repository that you are executing
 the GitHub Actions workflow from, as the implementation requires this to be able to generate the access tokens_.
 
 ## Contributions
@@ -208,7 +208,7 @@ First set the following environment variables:
 
 and either:
 
-- `GITHUB_ORGANIZATION` - The GitHub Organisation to get the application installation for, if not specified will use the current repository instead
+- `GITHUB_ORG` - The GitHub Organisation to get the application installation for, if not specified will use the current repository instead
 or
 - `GITHUB_REPOSITORY_OWNER` - The GitHub Repository Owner to get the application installation for, if not specified will use the current repository instead
 
@@ -217,8 +217,7 @@ e.g:
 ```shell
 export GITHUB_APPLICATION_PRIVATE_KEY='-----BEGIN RSA PRIVATE KEY-----\\n<your private key>\\n-----END RSA PRIVATE KEY-----'
 export GITHUB_APPLICATION_ID=<applicationId>
-export GITHUB_ORGANIZATION=<organisation>
-export GITHUB_REPOSITORY_OWNER=<owner>
+export GITHUB_APPLICATION_ORG=<organisation>
 ```
 
 Then run the following commands:
