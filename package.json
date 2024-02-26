@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@jest/globals": "29.7.0",
-    "@types/chai": "4.3.11",
+    "@types/chai": "4.3.12",
     "@types/jest": "29.5.12",
     "@types/jsonwebtoken": "9.0.5",
     "@types/sinon": "17.0.3",
