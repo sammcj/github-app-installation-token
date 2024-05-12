@@ -39,7 +39,7 @@
     "@types/jsonwebtoken": "9.0.6",
     "@types/sinon": "17.0.3",
     "@vercel/ncc": "0.38.1",
-    "chai": "5.1.0",
+    "chai": "5.1.1",
     "eslint": "9.0.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-import": "2.29.1",
