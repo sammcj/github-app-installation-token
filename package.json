@@ -35,7 +35,7 @@
   "devDependencies": {
     "@jest/globals": "29.7.0",
     "@types/chai": "4.3.19",
-    "@types/jest": "29.5.12",
+    "@types/jest": "29.5.13",
     "@types/jsonwebtoken": "9.0.6",
     "@types/sinon": "17.0.3",
     "@vercel/ncc": "0.38.1",
